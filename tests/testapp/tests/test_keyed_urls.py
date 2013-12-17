@@ -1,3 +1,4 @@
+from django.template import Template, Context, TemplateSyntaxError
 from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils.translation import override
@@ -13,7 +14,10 @@ class KeyedURLTest(TestCase):
             url='https://example.com/test1',
         )
 
+        self.assertEqual('%s' % url, 'test1')
+        self.assertEqual(url.url, url.get_absolute_url())
         self.assertEqual(url.url, 'https://example.com/test1')
+
         self.assertEqual(get_url('test1'), 'https://example.com/test1')
 
         url.url = 'https://example.com/test2'
@@ -93,3 +97,16 @@ class KeyedURLTest(TestCase):
         self.assertIn(
             'test1:it:var:english#',
             html)
+
+    def test_templatetag_failures(self):
+        self.assertRaises(
+            TemplateSyntaxError,
+            Template,
+            '{% load keyed_urls %} {% keyed_url %}',
+        )
+
+        self.assertRaises(
+            TemplateSyntaxError,
+            Template,
+            '{% load keyed_urls %} {% keyed_url "test1" bla-=3 %}',
+        )
