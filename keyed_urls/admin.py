@@ -4,6 +4,7 @@ from keyed_urls.models import KeyedURL
 
 
 class KeyedURLAdmin(admin.ModelAdmin):
+    list_display = ('key', 'url')
     ordering = ('key',)
     search_fields = ('key', 'url')
 
