@@ -8,11 +8,16 @@ _none_type = 0xc0ffee
 def get_url(key, language=None):
     from django.conf import settings
     from django.core.cache import cache
-    from django.utils.translation import get_language, override, trans_real
+    from django.utils.translation import get_language, override
     from keyed_urls.models import KeyedURL
 
     language = language if language is not None else get_language()
-    language = trans_real.get_supported_language_variant(language)
+
+    # Django 1.6 comes with trans_real.get_supported_language_variant;
+    # we are being fast and cheap here.
+    if language not in settings.LANGUAGES:
+        language = language.split('-')[0]
+
     cache_key = 'keyed_urls:%s:%s' % (key, language)
 
     url = cache.get(cache_key)
