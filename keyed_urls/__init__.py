@@ -36,10 +36,7 @@ def get_url(key, language=None):
             url = None
 
         else:
-            if language:
-                with override(language=language):
-                    url = instance.url
-            else:
+            with override(language=language):
                 url = instance.url
 
             cache.set(cache_key, _none_type if url is None else url, 120)
