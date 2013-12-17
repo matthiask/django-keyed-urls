@@ -1,3 +1,4 @@
+from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils.translation import override
 
@@ -59,4 +60,24 @@ class KeyedURLTest(TestCase):
                 get_url('test1', language='de'),
                 None)
 
-        # print url.__dict__
+    def test_templatetag(self):
+        KeyedURL.objects.create(
+            key='test1',
+            url_de='german',
+            url_en='english',
+        )
+
+        html = render_to_string('test.html')
+
+        self.assertIn(
+            'test1:english#',
+            html)
+        self.assertIn(
+            'test1:en:english#',
+            html)
+        self.assertIn(
+            'test1:de:german#',
+            html)
+        self.assertIn(
+            'test1:fr:english#',
+            html)
