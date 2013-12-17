@@ -4,3 +4,6 @@ test1:{% keyed_url 'test1' %}#
 test1:en:{% keyed_url 'test1' language='en' %}#
 test1:de:{% keyed_url 'test1' language='de' %}#
 test1:fr:{% keyed_url 'test1' language='fr' %}#
+
+{% keyed_url 'test1' language='it' as var %}
+test1:it:var:{{ var }}#

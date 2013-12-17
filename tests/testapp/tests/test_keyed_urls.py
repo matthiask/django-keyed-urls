@@ -81,3 +81,6 @@ class KeyedURLTest(TestCase):
         self.assertIn(
             'test1:fr:english#',
             html)
+        self.assertIn(
+            'test1:it:var:english#',
+            html)
