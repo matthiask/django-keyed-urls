@@ -2,6 +2,9 @@
 django-keyed-urls
 =================
 
+.. image:: https://travis-ci.org/matthiask/django-keyed-urls.png?branch=master
+   :target: https://travis-ci.org/matthiask/django-keyed-urls
+
 An app for those cases when you want database-configurable URLs.
 
 
