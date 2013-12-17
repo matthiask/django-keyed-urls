@@ -1,4 +1,4 @@
-from django.template import Template, Context, TemplateSyntaxError
+from django.template import Template, TemplateSyntaxError
 from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils.translation import override
