@@ -3,19 +3,25 @@ __version__ = '.'.join(map(str, VERSION))
 
 
 _none_type = 0xc0ffee
+_available_languages = None
 
 
 def get_url(key, language=None):
+    global _available_languages
+
     from django.conf import settings
     from django.core.cache import cache
     from django.utils.translation import get_language, override
     from keyed_urls.models import KeyedURL
 
+    if _available_languages is None:
+        _available_languages = [row[0] for row in settings.LANGUAGES]
+
     language = language if language is not None else get_language()
 
     # Django 1.6 comes with trans_real.get_supported_language_variant;
-    # we are being fast and cheap here.
-    if language not in settings.LANGUAGES:
+    # earlier versions do not. We are being fast and cheap here.
+    if language not in _available_languages:
         language = language.split('-')[0]
 
     cache_key = 'keyed_urls:%s:%s' % (key, language)

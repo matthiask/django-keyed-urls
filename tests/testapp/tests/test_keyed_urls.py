@@ -44,6 +44,15 @@ class KeyedURLTest(TestCase):
                     get_url('test1', language=None),
                     'https://example.com/test-de')
 
+            with override('de-ch'):
+                self.assertEqual(
+                    get_url('test1', language=None),
+                    'https://example.com/test-de')
+
+            self.assertEqual(
+                get_url('test1', language='de-ch'),
+                'https://example.com/test-de')
+
         url.delete()
         with self.assertNumQueries(1):
             self.assertEqual(
