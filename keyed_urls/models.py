@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
@@ -21,6 +22,12 @@ class KeyedURL(models.Model):
 
     def get_absolute_url(self):
         return self.url
+
+    def forward_by_pk_url(self):
+        return reverse('keyed_url_forward_by_pk', kwargs={'pk': self.pk})
+
+    def forward_by_key_url(self):
+        return reverse('keyed_url_forward_by_key', kwargs={'key': self.key})
 
 
 @receiver(signals.post_save, sender=KeyedURL)

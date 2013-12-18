@@ -80,7 +80,8 @@ class KeyedURLTest(TestCase):
             url_en='english',
         )
 
-        html = render_to_string('test.html')
+        with override('en'):
+            html = render_to_string('test.html')
 
         self.assertIn(
             'test1:english#',
@@ -109,4 +110,43 @@ class KeyedURLTest(TestCase):
             TemplateSyntaxError,
             Template,
             '{% load keyed_urls %} {% keyed_url "test1" bla-=3 %}',
+        )
+
+    def test_forwarders(self):
+        key = KeyedURL.objects.create(
+            key='test1',
+            url_en='http://testserver/whatever-en',
+            url_de='http://testserver/whatever-de',
+        )
+
+        with override('de'):
+            self.assertEqual(
+                key.forward_by_pk_url(),
+                '/de/ku/forward/%s/' % key.pk,
+            )
+            self.assertEqual(
+                key.forward_by_key_url(),
+                '/de/ku/forward/test1/',
+            )
+
+        with override('it'):
+            self.assertEqual(
+                key.forward_by_pk_url(),
+                '/it/ku/forward/%s/' % key.pk,
+            )
+            self.assertEqual(
+                key.forward_by_key_url(),
+                '/it/ku/forward/test1/',
+            )
+
+        self.assertRedirects(
+            self.client.get('/en/ku/forward/%s/' % key.pk),
+            'http://testserver/whatever-en',
+            target_status_code=404,
+        )
+
+        self.assertRedirects(
+            self.client.get('/de/ku/forward/%s/' % key.pk),
+            'http://testserver/whatever-de',
+            target_status_code=404,
         )
