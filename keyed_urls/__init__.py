@@ -48,3 +48,7 @@ def get_url(key, language=None):
             cache.set(cache_key, _none_type if url is None else url, 120)
 
     return None if url == _none_type else url
+
+
+def get_forwarding_url(key, language=None):
+    raise NotImplementedError('TODO!')
