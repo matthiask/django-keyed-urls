@@ -47,6 +47,9 @@ language-specific redirection URLs are automatically handled correctly::
 Usage
 -----
 
+Template tags
+~~~~~~~~~~~~~
+
 Usage is simple::
 
     {% load keyed_urls %}
@@ -62,3 +65,9 @@ Or::
     {% keyed_url 'some_key' language='en' as url %}
 
     <a href="{{ url }}">bla</a>
+
+
+Helpers
+~~~~~~~
+
+TODO Describe ``keyed_urls.get_url`` and ``keyed_urls.get_forwarding_url``.
