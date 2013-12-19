@@ -1,5 +1,3 @@
-from unittest import skipIf
-
 import django
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -8,6 +6,7 @@ from django.template import Context, Template, TemplateSyntaxError
 from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils.translation import override
+from django.utils.unittest import skipIf
 
 from keyed_urls import get_url, get_forwarding_url
 from keyed_urls.models import KeyedURL
