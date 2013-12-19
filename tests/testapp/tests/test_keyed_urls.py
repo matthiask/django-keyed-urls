@@ -1,4 +1,10 @@
-from django.template import Template, TemplateSyntaxError
+from unittest import skipIf
+
+import django
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.urlresolvers import NoReverseMatch
+from django.template import Context, Template, TemplateSyntaxError
 from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils.translation import override
@@ -112,6 +118,22 @@ class KeyedURLTest(TestCase):
             '{% load keyed_urls %} {% keyed_url "test1" bla-=3 %}',
         )
 
+        template = Template(
+            '{% load keyed_urls %}{% keyed_url "invalid key" %}')
+        # The template just shows "None"
+        self.assertEqual(
+            template.render(Context({})),
+            u'None',
+        )
+
+        template = Template(
+            '{% load keyed_urls %}{% keyed_url "invalid key" as var %}'
+            '{{ var|default:"-" }}')
+        self.assertEqual(
+            template.render(Context({})),
+            u'-',
+        )
+
     def test_forwarders(self):
         key = KeyedURL.objects.create(
             key='test1',
@@ -148,3 +170,58 @@ class KeyedURLTest(TestCase):
             'http://testserver/whatever-en',
             target_status_code=404,
         )
+
+    def test_invalid_keys(self):
+        key = KeyedURL.objects.create(
+            key='invalid with spaces',
+            url='http://testserver/whatever',
+        )
+
+        self.assertRaises(
+            NoReverseMatch,
+            key.get_forwarding_url,
+        )
+
+        self.assertRaises(
+            NoReverseMatch,
+            get_forwarding_url,
+            'invalid with spaces',
+        )
+
+    def test_admin_validation(self):
+        User.objects.create_superuser(
+            'admin', 'admin@example.com', 'password')
+
+        self.client.login(username='admin', password='password')
+
+        response = self.client.post(
+            '/admin/keyed_urls/keyedurl/add/',
+            {
+                'key': 'invalid with spaces',
+            }
+        )
+
+        self.assertRegexpMatches(
+            response.content.decode('utf-8'),
+            r'Enter a valid.+slug.+consisting of letters,',
+        )
+
+    @skipIf(
+        django.VERSION < (1, 6),
+        'This test requires Django 1.6 or better.',
+    )
+    def test_django16_model_validation(self):
+        key = KeyedURL.objects.create(
+            key='invalid with spaces',
+            url='http://testserver/whatever',
+        )
+
+        try:
+            key.full_clean()
+        except ValidationError as exc:
+            self.assertIn(
+                'Enter a valid \'slug\'',
+                str(exc),
+            )
+        else:
+            self.fail('ValidationError not raised')  # noqa

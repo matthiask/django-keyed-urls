@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 
 @python_2_unicode_compatible
 class KeyedURL(models.Model):
-    key = models.CharField(_('key'), max_length=40, unique=True)
+    key = models.SlugField(_('key'), max_length=40, unique=True)
     url = models.URLField(_('URL'), max_length=1000)
 
     class Meta:
