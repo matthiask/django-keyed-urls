@@ -55,7 +55,7 @@ def get_url(key, language=None, fail_silently=False):
         url = None
 
     if url is None and not fail_silently:
-        raise KeyDoesNotExist('No match found for key "%s".' % url)
+        raise KeyDoesNotExist('No match found for key "%s".' % key)
 
     return None if url == _none_type else url
 

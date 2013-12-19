@@ -1,3 +1,5 @@
+import sys
+
 import django
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -83,6 +85,14 @@ class KeyedURLTest(TestCase):
             get_url,
             'test1',
         )
+
+        if sys.version_info > (2, 6):
+            self.assertRaisesRegexp(
+                KeyDoesNotExist,
+                r'^No match found for key "test42".$',
+                get_url,
+                'test42',
+            )
 
     def test_templatetag(self):
         KeyedURL.objects.create(
