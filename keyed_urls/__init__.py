@@ -6,7 +6,11 @@ _none_type = 0xc0ffee
 _available_languages = None
 
 
-def get_url(key, language=None):
+class KeyDoesNotExist(Exception):
+    pass
+
+
+def get_url(key, language=None, fail_silently=False):
     global _available_languages
 
     from django.conf import settings
@@ -46,6 +50,12 @@ def get_url(key, language=None):
                 url = instance.url
 
             cache.set(cache_key, _none_type if url is None else url, 120)
+
+    if url == _none_type:
+        url = None
+
+    if url is None and not fail_silently:
+        raise KeyDoesNotExist('No match found for key "%s".' % url)
 
     return None if url == _none_type else url
 

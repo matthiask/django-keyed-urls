@@ -70,9 +70,10 @@ Or::
     <a href="{{ url }}">bla</a>
 
 
-If a cartain key does not exist, the tag currently returns (or assigns)
-``None``. This behavior makes sense when using ``keyed_url`` as an
-assignment tag, but is not very helpful otherwise.
+If a key does not exist and the tag is used as an assignment tag, the variable
+is set to ``None``. Otherwise, a  ``KeyDoesNotExist`` exception is raised which
+also aborts template rendering. The behavior is equal to the behavior of
+Django's own ``{% url %}`` template tag in this regard.
 
 
 Helpers
@@ -90,8 +91,9 @@ The advantage of using ``get_url`` compared to fetching a ``KeyedURL`` model
 from the database and accessing its ``url`` attribute is that ``get_url`` is
 caching all results. Since ``get_url`` is also used internally by the template
 tag described above this means that you do not have to worry about performance
-as much as when using models directly. ``get_url`` returns ``None`` if a
-particular URL cannot be found.
+as much as when using models directly. ``get_url`` raises a ``KeyDoesNotExist``
+exception if a particular URL cannot be found. This can be prevented by passing
+``fail_silently=True``.
 
 The following snippet can be used to fetch the forwarding URL::
 

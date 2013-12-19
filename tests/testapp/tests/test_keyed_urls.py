@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.utils.translation import override
 from django.utils.unittest import skipIf
 
-from keyed_urls import get_url, get_forwarding_url
+from keyed_urls import KeyDoesNotExist, get_url, get_forwarding_url
 from keyed_urls.models import KeyedURL
 
 
@@ -65,18 +65,24 @@ class KeyedURLTest(TestCase):
         url.delete()
         with self.assertNumQueries(1):
             self.assertEqual(
-                get_url('test1', language='en'),
+                get_url('test1', language='en', fail_silently=True),
                 None)
             self.assertEqual(
-                get_url('test1', language='de'),
+                get_url('test1', language='de', fail_silently=True),
                 None)
 
             self.assertEqual(
-                get_url('test1', language='en'),
+                get_url('test1', language='en', fail_silently=True),
                 None)
             self.assertEqual(
-                get_url('test1', language='de'),
+                get_url('test1', language='de', fail_silently=True),
                 None)
+
+        self.assertRaises(
+            KeyDoesNotExist,
+            get_url,
+            'test1',
+        )
 
     def test_templatetag(self):
         KeyedURL.objects.create(
@@ -120,9 +126,10 @@ class KeyedURLTest(TestCase):
         template = Template(
             '{% load keyed_urls %}{% keyed_url "invalid key" %}')
         # The template just shows "None"
-        self.assertEqual(
-            template.render(Context({})),
-            u'None',
+        self.assertRaises(
+            KeyDoesNotExist,
+            template.render,
+            Context({}),
         )
 
         template = Template(
