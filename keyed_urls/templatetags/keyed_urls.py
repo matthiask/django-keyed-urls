@@ -74,9 +74,6 @@ def keyed_url(parser, token):
     if len(bits):
         for bit in bits:
             match = kwarg_re.match(bit)
-            if not match:
-                raise TemplateSyntaxError(
-                    "Malformed arguments to keyed_url tag")
             name, value = match.groups()
             if name:
                 kwargs[name] = parser.compile_filter(value)
