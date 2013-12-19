@@ -51,4 +51,10 @@ def get_url(key, language=None):
 
 
 def get_forwarding_url(key, language=None):
-    raise NotImplementedError('TODO!')
+    from django.core.urlresolvers import reverse
+    from django.utils.translation import override
+
+    if language is None:
+        return reverse('keyed_url_forward_by_key', kwargs={'key': key})
+    with override(language):
+        return reverse('keyed_url_forward_by_key', kwargs={'key': key})

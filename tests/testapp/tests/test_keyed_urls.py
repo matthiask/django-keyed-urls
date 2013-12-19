@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils.translation import override
 
-from keyed_urls import get_url
+from keyed_urls import get_url, get_forwarding_url
 from keyed_urls.models import KeyedURL
 
 
@@ -126,6 +126,18 @@ class KeyedURLTest(TestCase):
             )
             self.assertEqual(
                 key.forward_by_key_url(),
+                '/de/ku/forward/test1/',
+            )
+            self.assertEqual(
+                get_forwarding_url('test1'),
+                '/de/ku/forward/test1/',
+            )
+            self.assertEqual(
+                get_forwarding_url('test1', language='en'),
+                '/en/ku/forward/test1/',
+            )
+            self.assertEqual(
+                get_forwarding_url('test1'),
                 '/de/ku/forward/test1/',
             )
 
