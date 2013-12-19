@@ -121,11 +121,7 @@ class KeyedURLTest(TestCase):
 
         with override('de'):
             self.assertEqual(
-                key.forward_by_pk_url(),
-                '/de/ku/forward/%s/' % key.pk,
-            )
-            self.assertEqual(
-                key.forward_by_key_url(),
+                key.get_forwarding_url(),
                 '/de/ku/forward/test1/',
             )
             self.assertEqual(
@@ -143,22 +139,12 @@ class KeyedURLTest(TestCase):
 
         with override('it'):
             self.assertEqual(
-                key.forward_by_pk_url(),
-                '/it/ku/forward/%s/' % key.pk,
-            )
-            self.assertEqual(
-                key.forward_by_key_url(),
+                key.get_forwarding_url(),
                 '/it/ku/forward/test1/',
             )
 
         self.assertRedirects(
-            self.client.get('/en/ku/forward/%s/' % key.pk),
+            self.client.get('/en/ku/forward/test1/'),
             'http://testserver/whatever-en',
-            target_status_code=404,
-        )
-
-        self.assertRedirects(
-            self.client.get('/de/ku/forward/%s/' % key.pk),
-            'http://testserver/whatever-de',
             target_status_code=404,
         )

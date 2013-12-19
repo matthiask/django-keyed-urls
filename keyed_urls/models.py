@@ -23,11 +23,8 @@ class KeyedURL(models.Model):
     def get_absolute_url(self):
         return self.url
 
-    def forward_by_pk_url(self):
-        return reverse('keyed_url_forward_by_pk', kwargs={'pk': self.pk})
-
-    def forward_by_key_url(self):
-        return reverse('keyed_url_forward_by_key', kwargs={'key': self.key})
+    def get_forwarding_url(self):
+        return reverse('keyed_url_forward', kwargs={'key': self.key})
 
 
 @receiver(signals.post_save, sender=KeyedURL)
