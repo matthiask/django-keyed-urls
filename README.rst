@@ -5,7 +5,8 @@ django-keyed-urls
 .. image:: https://travis-ci.org/matthiask/django-keyed-urls.png?branch=master
    :target: https://travis-ci.org/matthiask/django-keyed-urls
 
-An app for those cases when you want database-configurable URLs.
+An app for those cases when you need language-specific URLs in the database
+for use in templates or as redirects.
 
 
 Installation
@@ -58,6 +59,8 @@ Usage is simple::
 
     <a href="{{ url }}">bla</a>
 
+    <a href="{% keyed_url 'some_other_key' %}">bla</a>
+
 Or::
 
     {% load keyed_urls %}
@@ -67,7 +70,40 @@ Or::
     <a href="{{ url }}">bla</a>
 
 
+If a cartain key does not exist, the tag currently returns (or assigns)
+``None``. This behavior makes sense when using ``keyed_url`` as an
+assignment tag, but is not very helpful otherwise.
+
+
 Helpers
 ~~~~~~~
 
-TODO Describe ``keyed_urls.get_url`` and ``keyed_urls.get_forwarding_url``.
+Two additional helpers are available. If you need URLs in python code,
+use the following snippet::
+
+    from keyed_urls import get_url
+
+    some_url = get_url('some_key')
+    some_other_url = get_url('some_key', language='en')
+
+The advantage of using ``get_url`` compared to fetching a ``KeyedURL`` model
+from the database and accessing its ``url`` attribute is that ``get_url`` is
+caching all results. Since ``get_url`` is also used internally by the template
+tag described above this means that you do not have to worry about performance
+as much as when using models directly. ``get_url`` returns ``None`` if a
+particular URL cannot be found.
+
+The following snippet can be used to fetch the forwarding URL::
+
+    from keyed_urls import get_forwarding_url
+
+    url = get_forwarding_url('some_key')
+    url = get_forwarding_url('some_key', language='de')
+
+``get_forwarding_url`` is nothing more but a thin wrapper around Django's own
+``reverse`` method. This method raises a ``NoReverseMatch`` exception if the
+key is invalid, but does not check whether the given key exists at all in the
+database. When visiting the link, users will get a 404 response. For
+``get_forwarding_url`` to work you have to include ``keyed_urls.urls``
+somewhere in your URLconf as described above, preferrably inside an
+``i18n_patterns`` block.
