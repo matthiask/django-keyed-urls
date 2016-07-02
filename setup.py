@@ -18,21 +18,9 @@ setup(
     url='http://github.com/matthiask/django-keyed-urls/',
     license='BSD License',
     platforms=['OS Independent'],
-    packages=find_packages(),
-    package_data={
-        '': ['*.html', '*.txt'],
-        'keyed_urls': [
-            'locale/*/*/*.*',
-            # 'static/keyed_urls/*.*',
-            # 'static/keyed_urls/*/*.*',
-            'templates/*.*',
-            'templates/*/*.*',
-            'templates/*/*/*.*',
-            'templates/*/*/*/*.*',
-        ],
-    },
+    packages=find_packages(exclude=['tests']),
+    include_package_data=True,
     install_requires=[
-        'Django>=1.4.2',
         'django-modeltranslation',
     ],
     classifiers=[
@@ -44,7 +32,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',

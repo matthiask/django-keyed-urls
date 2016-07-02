@@ -11,4 +11,3 @@
 /dist
 /django_keyed_urls.egg-info
 /tests/venv
-.tox

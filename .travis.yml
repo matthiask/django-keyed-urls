@@ -1,19 +1,14 @@
 language: python
+cache: pip
 python:
-  - "3.3"
+  - "3.4"
   - "2.7"
-  - "2.6"
 env:
-  - DJANGO_VERSION=1.4.2
-  - DJANGO_VERSION=1.5.5
-  - DJANGO_VERSION=1.6.1
-matrix:
-  exclude:
-    - python: "3.3"
-      env: DJANGO_VERSION=1.4.2
+  - DJANGO_VERSION>=1.8,<1.9
+  - DJANGO_VERSION>=1.9,<1.10
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-  - pip install -q Django==$DJANGO_VERSION django-modeltranslation==0.7.2 --use-mirrors
+  - pip install -q Django==$DJANGO_VERSION django-modeltranslation
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
 script: "cd tests && ./manage.py test testapp"
